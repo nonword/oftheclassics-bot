@@ -302,11 +302,27 @@ def encode_utf8(str)
   })
 end
 
+def show_help
+  puts "Usage:"
+  puts "ruby run.rb [CMD] where [CMD] is:"
+  puts "  list_texts:              Display list of texts currently loaded for sampling"
+  puts "  prebuild_tweets [COUNT]: Pre-build COUNT tweets and save in queue"
+  puts "  list_queued:             Display all tweets in queue"
+  puts "  delete_queued [KEY]:     Delete queued tweet by key"
+  puts "  tweet!:                  Select a random queued post, dequeue it, and tweet it"
+end
+
 bot = PrepBot.new
+if (ARGV.empty? || !bot.methods.include?(ARGV.first.to_sym))
+  show_help
+  exit
+end
+
 command = ARGV.first
 if bot.respond_to? command
   args = ARGV.map { |v| v.match(/^[0-9]+$/) ? v.to_i : v }
   bot.send(*args)
 else
   puts "Invalid command."
+  show_help
 end
