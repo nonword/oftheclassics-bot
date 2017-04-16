@@ -1,23 +1,10 @@
-=begin
-###############################################################################
-Usage:
 
-  Pre-build NUM many tweets and place them in `data/queue`:
-    ruby run.rb prebuild_tweets NUM
-
-  List tweets in `data/queue`:
-    ruby run.rb list_queued
-
-  Delete a tweet from queue by ID:
-    ruby run.rb delete_queued ID
-
-  Take one random tweet from `data/queue`, tweet it, and move it to `data/used`
-    ruby run.rb tweet!
-
-  List texts:
-    ruby run.rb list_texts
-###############################################################################
-=end
+USAGE = 'ruby run.rb [CMD] where [CMD] is:
+  list_texts:              Display list of texts currently loaded for sampling
+  prebuild_tweets [COUNT]: Pre-build COUNT tweets and save in queue
+  list_queued:             Display all tweets in data/queue
+  delete_queued [KEY]:     Delete tweet from data/queue by key
+  tweet!:                  Select a random tweet, dequeue it, and tweet it'
 
 require 'stanford-core-nlp'
 require 'open-uri'
@@ -178,8 +165,13 @@ class PrepBot
     if text.nil? || text.empty?
       text = nil
       puts "Fetching #{url}"
-      open url do |f|
-        text = f.read
+      begin
+        open url do |f|
+          text = f.read
+        end
+      rescue
+        puts "WARN: Failed to load #{url}"
+        return ''
       end
       puts " Saving to cache: #{text.size}"
       @cache.set url, text
@@ -302,13 +294,7 @@ def encode_utf8(str)
 end
 
 def show_help
-  puts "Usage:"
-  puts "ruby run.rb [CMD] where [CMD] is:"
-  puts "  list_texts:              Display list of texts currently loaded for sampling"
-  puts "  prebuild_tweets [COUNT]: Pre-build COUNT tweets and save in queue"
-  puts "  list_queued:             Display all tweets in queue"
-  puts "  delete_queued [KEY]:     Delete queued tweet by key"
-  puts "  tweet!:                  Select a random queued post, dequeue it, and tweet it"
+  puts "Usage:\n#{USAGE}"
 end
 
 bot = PrepBot.new
