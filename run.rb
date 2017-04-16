@@ -20,7 +20,6 @@ Usage:
 =end
 
 require 'stanford-core-nlp'
-require 'pry'
 require 'open-uri'
 require 'csv'
 require 'digest'
