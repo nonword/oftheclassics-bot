@@ -206,7 +206,7 @@ class PrepBot
 
     # Use the model files for a different language than English.
     StanfordCoreNLP.use :english 
-    StanfordCoreNLP.jar_path = '/Users/paulbeaudoin/.rvm/gems/ruby-2.1.5/gems/stanford-core-nlp-0.5.3/bin/'
+    StanfordCoreNLP.jar_path = ENV['CORENLP_PATH']
     StanfordCoreNLP.model_files = {}
     StanfordCoreNLP.default_jars = [
       'joda-time.jar',
