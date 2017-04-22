@@ -24,6 +24,11 @@ class PrepBot
     `rm #{TWEET_QUEUE_BASE}/#{key}.json`
   end
 
+  def test_text(text)
+    result = parse_prepositions text
+    puts "Result: #{result}"
+  end
+
   def tweet!
     tweet = get_queued.sample(1).first
     puts "Tweeting: #{tweet.to_s}"
@@ -260,7 +265,8 @@ class PrepBot
         tag = tree.value
 
         if tag == 'PP'
-          text = flatten_tree tree
+          # strip redundant spaces
+          text = flatten_tree(tree).gsub(/\s{2,}/, ' ').sub(/^\s/, '')
 
           text = text.gsub(/\s,/, ',')
 
@@ -278,7 +284,11 @@ class PrepBot
     if tree.label.get(:category).to_s == ''
       tree.to_s
     else
-      tree.children.map { |t| flatten_tree t }.join ' '
+      s = ''
+      # Append with space unless it's a posessive 's
+      s = ' ' if tree.label.get(:category).to_s != 'POS'
+      s += tree.children.map { |t| flatten_tree t }.join ''
+      s
     end
   end
 end
