@@ -84,7 +84,7 @@ class PrepBot
     puts "Texts:"
     texts.each do |text|
       len = load_text(text['URL']).size
-      puts "  #{text['Title']}: #{len}"
+      puts "  #{text['Title']}: #{len} ( #{text['URL']} )"
     end
   end
 
