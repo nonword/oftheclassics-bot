@@ -281,14 +281,14 @@ class PrepBot
   end
 
   def flatten_tree(tree)
-    if tree.label.get(:category).to_s == ''
+    category = tree.label.get(:category).to_s
+    if category == ''
       tree.to_s
     else
-      s = ''
-      # Append with space unless it's a posessive 's
-      s = ' ' if tree.label.get(:category).to_s != 'POS'
-      s += tree.children.map { |t| flatten_tree t }.join ''
-      s
+      text = tree.children.map { |t| flatten_tree t }.join ''
+      # puts "text: #{category}: #{text}"
+      # Append with space unless it's a posessive 's or contraction
+      (['POS', 'VBZ', 'VP', 'S'].include?(category) ? '' : ' ') + text
     end
   end
 end
