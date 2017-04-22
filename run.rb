@@ -31,6 +31,30 @@ class PrepBot
     dequeue tweet
   end
 
+  def review_queued
+    require 'io/console'
+    puts "Queued tweets: "
+    get_queued.select { |t| ! t.approved }.each do |tweet|
+      puts tweet.to_s
+      puts "__ id #{tweet.cache_key} __________________________________"
+      puts ""
+      puts "[k]eep, [d]elete, or [q]uit?: "
+      char = STDIN.getch
+      if ['q'].include? char
+        puts "Quitting."
+        return
+      elsif (char == 'k') 
+        tweet.approved = true
+        save_tweet(tweet)
+      elsif (char == 'd') 
+        puts "___________________________________________________________"
+        puts "  Deleting #{tweet.cache_key}."
+        puts "___________________________________________________________"
+        delete_queued(tweet.cache_key)
+      end
+    end
+  end
+
   def list_queued
     puts "Queued tweets: "
     get_queued.each do |tweet|
@@ -49,9 +73,7 @@ class PrepBot
         path = path_for(tweet)
         break if ! File.exist?(path)
       end
-      File.open(path, 'w') do |file|
-        file.write JSON.generate(tweet.to_h)
-      end
+      save_tweet(tweet)
 
       puts "Prebuild tweet: #{tweet.to_s}"
     end
@@ -94,6 +116,13 @@ class PrepBot
       ret << Tweet.new(h)
     end
     ret
+  end
+
+  def save_tweet(tweet)
+    path = path_for(tweet)
+    File.open(path, 'w') do |file|
+      file.write JSON.generate(tweet.to_h)
+    end
   end
 
   def path_for(tweet)
@@ -255,7 +284,7 @@ class PrepBot
 end
 
 class Tweet
-  attr_accessor :text, :original_text, :title, :author, :text_url, :cat_url
+  attr_accessor :text, :original_text, :title, :author, :text_url, :cat_url, :approved
 
   def initialize(h)
     for k in h.keys
@@ -269,12 +298,13 @@ class Tweet
       original_text: encode_utf8(original_text),
       title: encode_utf8(title),
       author: encode_utf8(author),
-      cat_url: cat_url
+      cat_url: cat_url,
+      approved: approved
     }
   end
 
   def to_s
-    lines = ["\"#{text}\"", "#{title}", "#{author}"]
+    lines = ["#{approved ? 'APPROVED' : ''} \"#{text}\"", "#{title}", "#{author}"]
     lines << cat_url if cat_url
     lines << "[#{text_url}]" if text_url
     lines.join "\n"
