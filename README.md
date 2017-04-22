@@ -51,5 +51,10 @@ set up app at apps.twitter.com
    JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
  - source /etc/environment
 
-
+Create 2G swap space (cause running the parser typically consumes about one whole G of mem):
+ - sudo dd if=/dev/zero of=/swapfile bs=1M count=2000
+ - sudo chmod 600 /swapfile
+ - sudo mkswap /swapfile
+ - sudo swapon /swapfile
+ - Add "/swapfile   none    swap    sw    0   0" to end of /etc/fstab
 
