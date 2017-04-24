@@ -41,7 +41,7 @@ class PrepBot
     puts "Queued tweets: "
     get_queued.select { |t| ! t.approved }.each do |tweet|
       puts tweet.to_s
-      puts "__ id #{tweet.cache_key} #{tweet.approved ? 'APPROVED' : '________'}__________________________"
+      puts "__ id #{tweet.cache_key} __________________________________"
       puts ""
       puts "[k]eep, [d]elete, or [q]uit?: "
       char = STDIN.getch
@@ -64,7 +64,7 @@ class PrepBot
     puts "Queued tweets: "
     get_queued.each do |tweet|
       puts tweet.to_s
-      puts "__ id #{tweet.cache_key} __________________________________"
+      puts "__ id #{tweet.cache_key} #{tweet.approved ? 'APPROVED' : '________'}__________________________"
       puts ""
     end
   end
