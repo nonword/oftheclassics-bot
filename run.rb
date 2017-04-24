@@ -41,7 +41,7 @@ class PrepBot
     puts "Queued tweets: "
     get_queued.select { |t| ! t.approved }.each do |tweet|
       puts tweet.to_s
-      puts "__ id #{tweet.cache_key} __________________________________"
+      puts "__ id #{tweet.cache_key} #{tweet.approved ? 'APPROVED' : '________'}__________________________"
       puts ""
       puts "[k]eep, [d]elete, or [q]uit?: "
       char = STDIN.getch
@@ -314,7 +314,7 @@ class Tweet
   end
 
   def to_s
-    lines = ["#{approved ? 'APPROVED' : ''} \"#{text}\"", "#{title}", "#{author}"]
+    lines = ["\"#{text}\"", "#{title}", "#{author}"]
     lines << cat_url if cat_url
     lines << "[#{text_url}]" if text_url
     lines.join "\n"
